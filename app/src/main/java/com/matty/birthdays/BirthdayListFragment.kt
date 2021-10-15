@@ -13,7 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 private const val TAG = "BirthdaysFragment"
 
 @AndroidEntryPoint
-class BirthdaysFragment : Fragment(R.layout.fragment_birthdays) {
+class BirthdayListFragment : Fragment(R.layout.fragment_birthdays) {
 
     private val birthdaysViewModel: BirthdaysViewModel by viewModels()
     private lateinit var fragmentBinding: FragmentBirthdaysBinding
