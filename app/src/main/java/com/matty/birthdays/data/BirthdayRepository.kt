@@ -29,7 +29,11 @@ class BirthdayRepository @Inject constructor() {
         }
     }
 
-    suspend fun getFromContacts(): List<Birthday> {
-        return contactsDataSource.get().fetchContacts()
+    suspend fun getFromContacts(id: List<Long> = emptyList()): List<Birthday> {
+        return contactsDataSource.get().fetchContacts(id)
+    }
+
+    suspend fun deleteBirthdays(id: List<Long>) {
+        database.birthdayDao().deleteBirthdays(id)
     }
 }

@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.matty.birthdays.data.BirthdaysImporter
 import com.matty.birthdays.databinding.FragmentContactsPermissionBinding
-import com.matty.birthdays.navigation.NavigationAware
 import com.matty.birthdays.ui.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -59,7 +58,10 @@ class ContactsPermissionFragment : Fragment(R.layout.fragment_contacts_permissio
         birthdaysImporter.import().observe(viewLifecycleOwner) {
             binding.progressBar.visibility = View.GONE
             binding.greetingImg.visibility = View.VISIBLE
-            (requireActivity() as NavigationAware).getNavigator().toBirthdayListScreen()
+            with((requireActivity() as MainActivity)) {
+                registerContentObservers()
+                getNavigator().toBirthdayListScreen()
+            }
         }
     }
 }
