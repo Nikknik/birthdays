@@ -57,10 +57,10 @@ class BirthdaysAdapter(private val items: List<Birthday>) :
             binding.name.text = birthday.name
             when (dateHorizon) {
                 SOMETIME -> {
-                    binding.date.setText(R.string.tomorrow_short_text)
+                    binding.date.text = dateFormat.format(birthday.nearest)
                 }
                 TOMORROW -> {
-                    binding.date.text = dateFormat.format(birthday.nearest)
+                    binding.date.setText(R.string.tomorrow_short_text)
                 }
                 TODAY -> {
                     binding.date.apply {

@@ -3,11 +3,9 @@ package com.matty.birthdays.navigation
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
-import com.matty.birthdays.BirthdayListFragment
-import com.matty.birthdays.ContactsPermissionFragment
 import com.matty.birthdays.R
-
-private const val TAG = "Navigator"
+import com.matty.birthdays.ui.BirthdayListFragment
+import com.matty.birthdays.ui.ContactsPermissionFragment
 
 class Navigator(private val supportFragmentManager: FragmentManager) {
 

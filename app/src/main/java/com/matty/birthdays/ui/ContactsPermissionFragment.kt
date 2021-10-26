@@ -1,4 +1,4 @@
-package com.matty.birthdays
+package com.matty.birthdays.ui
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -8,19 +8,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
-import com.matty.birthdays.data.BirthdaysImporter
+import com.matty.birthdays.MainActivity
+import com.matty.birthdays.R
 import com.matty.birthdays.databinding.FragmentContactsPermissionBinding
-import com.matty.birthdays.ui.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class ContactsPermissionFragment : Fragment(R.layout.fragment_contacts_permission) {
-
     private lateinit var binding: FragmentContactsPermissionBinding
-
-    @Inject
-    lateinit var birthdaysImporter: BirthdaysImporter
 
     private val requestContactsPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -53,15 +48,8 @@ class ContactsPermissionFragment : Fragment(R.layout.fragment_contacts_permissio
     }
 
     private fun importBirthdaysFromContacts() {
-        binding.greetingImg.visibility = View.GONE
-        binding.progressBar.visibility = View.VISIBLE
-        birthdaysImporter.import().observe(viewLifecycleOwner) {
-            binding.progressBar.visibility = View.GONE
-            binding.greetingImg.visibility = View.VISIBLE
-            with((requireActivity() as MainActivity)) {
-                registerContentObservers()
-                getNavigator().toBirthdayListScreen()
-            }
+        with((requireActivity() as MainActivity)) {
+            dispatchNextScreen()
         }
     }
 }
