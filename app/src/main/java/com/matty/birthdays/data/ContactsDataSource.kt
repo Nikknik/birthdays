@@ -14,15 +14,20 @@ class ContactsDataSource @Inject constructor() {
     @Inject
     lateinit var contentResolver: ContentResolver
 
-    fun fetchContacts(): List<Birthday> {
+    fun fetchContacts(id: Collection<Long>): List<Birthday> {
         val uri = ContactsContract.Data.CONTENT_URI
         val queryFields = arrayOf(
             ContactsContract.Contacts.DISPLAY_NAME,
             ContactsContract.CommonDataKinds.Event.START_DATE,
-            ContactsContract.Contacts._ID
+            ContactsContract.CommonDataKinds.Event.CONTACT_ID
         )
-        val where = ContactsContract.CommonDataKinds.Event.TYPE + "=" +
+        var where = ContactsContract.CommonDataKinds.Event.TYPE + "=" +
                 ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY
+
+        if(id.isNotEmpty()) {
+            where = where + " AND " + ContactsContract.CommonDataKinds.Event.CONTACT_ID +
+                    " in (${id.joinToString(",")})"
+        }
 
         val cursor = contentResolver.query(uri, queryFields, where, null, null)
         return cursor?.use { c ->

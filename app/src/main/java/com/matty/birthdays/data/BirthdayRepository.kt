@@ -1,25 +1,21 @@
 package com.matty.birthdays.data
 
-import android.content.Context
-import android.util.Log
 import dagger.Lazy
-import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-
-private const val TAG = "BirthdayRepository"
 
 @Singleton
 class BirthdayRepository @Inject constructor() {
+    @Inject
+    lateinit var contactsDataSource: Lazy<ContactsDataSource>
 
-    @ApplicationContext
-    @Inject lateinit var context: Context
-    @Inject lateinit var contactsDataSource: Lazy<ContactsDataSource>
-    @Inject lateinit var database: BirthdayDatabase
+    @Inject
+    lateinit var database: BirthdayDatabase
 
-    suspend fun getBirthdays(): List<Birthday> {
+    fun getAll(): Flow<List<Birthday>> {
         return database.birthdayDao().getBirthdays()
     }
 
@@ -29,7 +25,12 @@ class BirthdayRepository @Inject constructor() {
         }
     }
 
-    suspend fun getFromContacts(): List<Birthday> {
-        return contactsDataSource.get().fetchContacts()
+    fun getFromContacts(id: List<Long> = emptyList()): List<Birthday> {
+        return contactsDataSource.get().fetchContacts(id)
+    }
+
+
+    suspend fun deleteById(id: List<Long>) {
+        database.birthdayDao().deleteBirthdays(id)
     }
 }
