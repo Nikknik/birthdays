@@ -38,7 +38,7 @@ data class Birthday(
     }
 
     @delegate:Transient
-    val willBeYearsOld: Int? by lazy {
+    val turns: Int? by lazy {
         year?.let {
             Calendar.getInstance().apply {
                 time = nearest

@@ -69,7 +69,7 @@ class BirthdaysAdapter(private val items: List<Birthday>) :
                     }
                 }
             }
-            birthday.willBeYearsOld?.let { years ->
+            birthday.turns?.let { years ->
                 binding.turns.text = itemView.context.getString(R.string.turns_text, years)
             }
         }
