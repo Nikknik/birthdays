@@ -31,13 +31,13 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import coil.compose.rememberImagePainter
-import coil.size.Scale
 import com.matty.birthdays.R
 import com.matty.birthdays.data.Birthday
 import com.matty.birthdays.ui.BirthdayListState.Loading
@@ -120,6 +120,8 @@ private fun BirthdayItemView(
                 modifier = Modifier
                     .padding(start = 8.dp, top = 12.dp)
                     .weight(1f),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
                 color = Color.Black,
                 fontSize = 20.sp
             )
@@ -154,8 +156,8 @@ private fun ContactImageView(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .background(background)
-            .width(84.dp)
-            .height(84.dp)
+            .width(74.dp)
+            .height(74.dp)
             .fillMaxHeight()
     ) {
         if (photoUri == null) {
@@ -206,7 +208,7 @@ fun BirthdayListView() {
                 Birthday(
                     contactId = 1L,
                     contactVersion = 1,
-                    name = "Alexander Petrov",
+                    name = "Alexander Petrov Alexander Petrov Alexander Petrov Alexander Petrov",
                     month = 11,
                     day = 2
                 ),
