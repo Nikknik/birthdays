@@ -1,20 +1,24 @@
 package com.matty.birthdays.data
 
+import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.matty.birthdays.utils.today
+import java.sql.Timestamp
 import java.util.Calendar
 import java.util.Date
 
 @Entity
 data class Birthday(
     @PrimaryKey
-    val id: Long,
-    val name: String,
+    val contactId: Long,
+    val contactVersion: Int,
 
+    val name: String,
     val day: Int,
     val month: Int,
-    val year: Int? = null
+    val year: Int? = null,
+    val photoUri: Uri? = null
 ) : Comparable<Birthday> {
     @Transient
     val nearest: Date = run {

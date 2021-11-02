@@ -15,6 +15,6 @@ interface BirthdayDao {
     @Insert(onConflict = IGNORE)
     suspend fun addBirthdays(birthday: List<Birthday>)
 
-    @Query("DELETE FROM birthday WHERE id in (:id)")
+    @Query("DELETE FROM birthday WHERE contactId in (:id)")
     suspend fun deleteBirthdays(id: List<Long>)
 }

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Snackbar
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,11 +22,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.android.material.snackbar.Snackbar
 import com.matty.birthdays.R
 
 @Composable
-fun ContactsPermissionScreen() {
+fun ContactsPermissionScreen(onPermissionGranted: () -> Unit) {
 
     val context = LocalContext.current
 
@@ -35,14 +33,14 @@ fun ContactsPermissionScreen() {
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-            //TODO
+            onPermissionGranted()
         } else
             Toast.makeText(
                 context,
                 "For the application to work correctly," +
                         "grant the application access to the contacts",
                 Toast.LENGTH_LONG
-            )
+            ).show()
     }
 
     Column(
@@ -79,5 +77,5 @@ fun ContactsPermissionScreen() {
 @Preview(showBackground = true)
 @Composable
 fun ContactsPermissionPreview() {
-    ContactsPermissionScreen()
+    ContactsPermissionScreen {}
 }
