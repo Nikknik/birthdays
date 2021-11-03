@@ -1,12 +1,16 @@
 <resources>
     <string name="app_name">Birthdays</string>
     <string name="importing_from_contacts_label">Загрузка дней рождений из контактов...</string>
-    <string name="privacy_contacts_label">Мы не передаем информацию третьим лицам</string>
+    <string name="privacy_info_label">Мы не передаем информацию третьим лицам</string>
     <string name="grant_access_to_contacts_button">Предоставить доступ</string>
-    <string name="grant_access_to_contacts_header">Доступ к Контактам</string>
+    <string name="grant_access_to_contacts_header">Доступ к контактам</string>
     <string name="today_text">Сегодня</string>
-    <string name="tomorrow_short_text">Завтра</string>
-    <string name="upcoming_text">Предстоящие</string>
-    <string name="avatar_text">Фото</string>
-    <string name="turns_text">исполнится %d</string>
+    <string name="tomorrow_short">Завтра</string>
+    <string name="avatar">Фото</string>
+    <string name="turns">исполнится %d</string>
+    <string name="no_birthdays">Нет дней рождений</string>
+    <string name="contacts_permission_reason">Для полноценной работы приложения необходим доступ к контактам</string>
+    <string name="greeting">Привет</string>
+    <string name="grant_access_to_contacts_later">Сделаю потом вручную</string>
+    <string name="allow_access_to_get_birthdays">для получения дней рождений</string>
 </resources>

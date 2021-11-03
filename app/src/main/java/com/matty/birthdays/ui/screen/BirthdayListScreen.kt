@@ -37,11 +37,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
+import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.matty.birthdays.R
 import com.matty.birthdays.data.Birthday
-import com.matty.birthdays.ui.BirthdayListState.Loading
-import com.matty.birthdays.ui.BirthdayListState.Success
+import com.matty.birthdays.navigation.toBirthdaysEmptyScreen
+import com.matty.birthdays.ui.BirthdaysState.Loading
+import com.matty.birthdays.ui.BirthdaysState.Success
 import com.matty.birthdays.ui.BirthdaysViewModel
 import com.matty.birthdays.ui.theme.BirthdaysTheme
 import com.matty.birthdays.ui.theme.PaleRed
@@ -58,7 +60,10 @@ private val today = today()
 private val tomorrow = tomorrow()
 
 @Composable
-fun BirthdayListScreen(viewModel: BirthdaysViewModel) {
+fun BirthdayListScreen(
+    viewModel: BirthdaysViewModel,
+    navHostController: NavHostController
+) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val birthdaysState = remember(lifecycleOwner.lifecycle) {
         viewModel.birthdaysFlow.flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
@@ -66,24 +71,20 @@ fun BirthdayListScreen(viewModel: BirthdaysViewModel) {
 
     when (val state = birthdaysState.value) {
         is Loading -> {
-            CircularProgressIndicator()
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                CircularProgressIndicator(progress = 0.5f)
+            }
         }
         is Success -> {
             if (state.birthdays.isNotEmpty()) {
                 BirthdayListView(state.birthdays)
             } else {
-                BirthdaysEmptyView()
+                navHostController.toBirthdaysEmptyScreen()
             }
         }
-    }
-
-
-}
-
-@Composable
-private fun BirthdaysEmptyView() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = "No birthdays")
     }
 }
 
@@ -137,7 +138,7 @@ private fun BirthdayItemView(
 
                 birthday.turns?.let { years ->
                     Text(
-                        text = stringResource(R.string.turns_text, years),
+                        text = stringResource(R.string.turns, years),
                         color = Color.LightGray,
                         fontSize = 14.sp
                     )
@@ -179,7 +180,7 @@ private fun ContactImageView(
 @Composable
 private fun DateView(date: Date, dateFormat: SimpleDateFormat) {
     val (text, fontSize) = when (date) {
-        tomorrow -> stringResource(R.string.tomorrow_short_text) to 20.sp
+        tomorrow -> stringResource(R.string.tomorrow_short) to 20.sp
         today -> stringResource(R.string.party_emoji) to 26.sp
         else -> dateFormat.format(date) to 20.sp
     }
@@ -221,13 +222,5 @@ fun BirthdayListView() {
                 )
             )
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun BirthdaysEmptyPreview() {
-    BirthdaysTheme {
-        BirthdaysEmptyView()
     }
 }

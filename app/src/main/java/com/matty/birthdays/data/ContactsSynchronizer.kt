@@ -1,4 +1,4 @@
-package com.matty.birthdays
+package com.matty.birthdays.data
 
 import android.app.Activity.MODE_PRIVATE
 import android.content.Context
@@ -7,7 +7,7 @@ import android.net.Uri
 import android.provider.ContactsContract.Contacts
 import android.provider.ContactsContract.DeletedContacts
 import android.util.Log
-import com.matty.birthdays.data.BirthdayRepository
+import com.matty.birthdays.isPermissionGranted
 import com.matty.birthdays.utils.toSequence
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
@@ -51,6 +51,11 @@ class ContactsSynchronizer @Inject constructor() : ContentObserver(null) {
 
     suspend fun synchronize() {
         Log.d(TAG, "synchronize: run")
+
+        if (!context.isPermissionGranted(android.Manifest.permission.READ_CONTACTS)) {
+            Log.w(TAG, "synchronize: insufficient permissions")
+            return
+        }
 
         withContext(coroutineScope.coroutineContext) {
             if (lastSyncTimestamp == 0L) {

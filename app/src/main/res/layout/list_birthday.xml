@@ -32,7 +32,7 @@
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/avatar_text"
+                    android:contentDescription="@string/avatar"
                     android:src="@drawable/no_avatar"
                     app:tint="#f5f5f5" />
             </RelativeLayout>

@@ -1,13 +1,17 @@
 <resources>
     <string name="app_name">Birthdays</string>
+    <string name="greeting">Welcome</string>
+    <string name="allow_access_to_get_birthdays">allow access to get birthdays</string>
+    <string name="contacts_permission_reason">For the application to work correctly grant the application access to the contacts</string>
     <string name="importing_from_contacts_label">Importing from contacts</string>
-    <string name="privacy_contacts_label"> Birthdays App will never share your information </string>
+    <string name="privacy_info_label">"Birthdays App will never share your information "</string>
     <string name="grant_access_to_contacts_button">Grant access</string>
-    <string name="grant_access_to_contacts_header">Grant access to contacts</string>
+    <string name="grant_access_to_contacts_later">Nah, i\'ll enter manually</string>
+    <string name="grant_access_to_contacts_header">Access to contacts</string>
     <string name="today_text">Today</string>
-    <string name="tomorrow_short_text">TMW</string>
-    <string name="upcoming_text">Upcoming</string>
-    <string name="avatar_text">Avatar</string>
-    <string name="turns_text">turns %d</string>
+    <string name="tomorrow_short">TMW</string>
+    <string name="avatar">Avatar</string>
+    <string name="turns">turns %d</string>
     <string name="party_emoji" translatable="false">&#127881;</string>
+    <string name="no_birthdays">No birthdays</string>
 </resources>
