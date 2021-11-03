@@ -1,8 +1,7 @@
-package com.matty.birthdays
+package com.matty.birthdays.ui
 
 import android.app.Activity.MODE_PRIVATE
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
-import androidx.core.content.ContextCompat
+import androidx.navigation.compose.rememberNavController
 import com.matty.birthdays.navigation.AppNavHost
 import com.matty.birthdays.ui.theme.BirthdaysTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,12 +21,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
+            val navController = rememberNavController()
+
             BirthdaysTheme {
                 Scaffold { innerPadding ->
                     Surface(
                         modifier = Modifier.padding(innerPadding)
                     ) {
-                        AppNavHost()
+                        AppNavHost(
+                            navController = navController
+                        )
                     }
                 }
             }
@@ -45,9 +48,3 @@ fun Context.checkFirstLaunch(): Boolean {
     }
     return isFirstLaunch
 }
-
-fun Context.isPermissionGranted(permission: String) = ContextCompat.checkSelfPermission(
-    this,
-    permission
-) == PackageManager.PERMISSION_GRANTED
-

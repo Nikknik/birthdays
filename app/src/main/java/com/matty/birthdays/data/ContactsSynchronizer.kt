@@ -7,7 +7,7 @@ import android.net.Uri
 import android.provider.ContactsContract.Contacts
 import android.provider.ContactsContract.DeletedContacts
 import android.util.Log
-import com.matty.birthdays.isPermissionGranted
+import com.matty.birthdays.isReadContactsNotAllowed
 import com.matty.birthdays.utils.toSequence
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
@@ -52,7 +52,7 @@ class ContactsSynchronizer @Inject constructor() : ContentObserver(null) {
     suspend fun synchronize() {
         Log.d(TAG, "synchronize: run")
 
-        if (!context.isPermissionGranted(android.Manifest.permission.READ_CONTACTS)) {
+        if (context.isReadContactsNotAllowed()) {
             Log.w(TAG, "synchronize: insufficient permissions")
             return
         }

@@ -1,5 +1,6 @@
 package com.matty.birthdays.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -8,55 +9,46 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.matty.birthdays.checkFirstLaunch
-
+import com.matty.birthdays.ui.BirthdaysViewModel
+import com.matty.birthdays.ui.checkFirstLaunch
 import com.matty.birthdays.ui.screen.BirthdayListScreen
-import com.matty.birthdays.ui.screen.BirthdaysEmptyScreen
 import com.matty.birthdays.ui.screen.WelcomeScreen
 
+private const val TAG = "AppNavHost"
+
 @Composable
-fun AppNavHost() {
+fun AppNavHost(
+    navController: NavHostController
+) {
     val context = LocalContext.current
-    val navController = rememberNavController()
     val isFirstLaunch = rememberSaveable {
         mutableStateOf(
             context.checkFirstLaunch()
         )
     }
 
+    Log.d(TAG, "AppNavHost: isFirstLaunch: ${isFirstLaunch.value}")
+
     NavHost(
         navController = navController,
-        startDestination = if (isFirstLaunch.value) Screen.BIRTHDAY_LIST else Screen.WELCOME
+        startDestination = if (isFirstLaunch.value) Screen.WELCOME else Screen.BIRTHDAY_LIST
     ) {
         composable(Screen.WELCOME) {
             WelcomeScreen(onFinish = {
-                navController.toBirthdayListScreen()
+                isFirstLaunch.value = false
             })
         }
         composable(Screen.BIRTHDAY_LIST) {
+            val viewModel = hiltViewModel<BirthdaysViewModel>()
             BirthdayListScreen(
-                viewModel = hiltViewModel(),
-                navHostController = navController
+                birthdaysFlow = viewModel.birthdaysFlow,
+                onContactsPermissionGranted = viewModel::syncWithContacts
             )
         }
-        composable(Screen.BIRTHDAYS_EMPTY) {
-            BirthdaysEmptyScreen()
-        }
     }
-}
-
-
-fun NavHostController.toBirthdaysEmptyScreen() {
-    navigate(Screen.BIRTHDAYS_EMPTY)
-}
-
-fun NavHostController.toBirthdayListScreen() {
-    navigate(Screen.BIRTHDAY_LIST)
 }
 
 private object Screen {
     const val BIRTHDAY_LIST = "BIRTHDAY_LIST"
     const val WELCOME = "CONTACTS_PERMISSION"
-    const val BIRTHDAYS_EMPTY = "BIRTHDAYS_EMPTY"
 }

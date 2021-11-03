@@ -32,7 +32,6 @@ fun WelcomeScreen(
     onFinish: () -> Unit
 ) {
     val context = LocalContext.current
-
     val requestContactsPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -45,6 +44,7 @@ fun WelcomeScreen(
                 Toast.LENGTH_LONG
             ).show()
     }
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -81,10 +81,10 @@ fun WelcomeScreen(
                 requestContactsPermissionLauncher.launch(Manifest.permission.READ_CONTACTS)
             }) {
                 Text(
-                    text = stringResource(R.string.grant_access_to_contacts_button)
+                    text = stringResource(R.string.grant_access_to_contacts_btn)
                 )
             }
-            TextButton(onClick = onFinish) {
+            TextButton(onClick = { onFinish() }) {
                 Text(stringResource(R.string.grant_access_to_contacts_later))
             }
             Text(

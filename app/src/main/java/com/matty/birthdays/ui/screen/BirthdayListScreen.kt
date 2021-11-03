@@ -1,7 +1,9 @@
 package com.matty.birthdays.ui.screen
 
 import android.net.Uri
-import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -28,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter.Companion.tint
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -37,22 +40,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
-import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.matty.birthdays.R
 import com.matty.birthdays.data.Birthday
-import com.matty.birthdays.navigation.toBirthdaysEmptyScreen
+import com.matty.birthdays.isReadContactsNotAllowed
+import com.matty.birthdays.ui.BirthdaysState
 import com.matty.birthdays.ui.BirthdaysState.Loading
 import com.matty.birthdays.ui.BirthdaysState.Success
-import com.matty.birthdays.ui.BirthdaysViewModel
 import com.matty.birthdays.ui.theme.BirthdaysTheme
 import com.matty.birthdays.ui.theme.PaleRed
+import com.matty.birthdays.ui.view.BirthdaysEmptyView
 import com.matty.birthdays.utils.today
 import com.matty.birthdays.utils.tomorrow
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
+import kotlinx.coroutines.flow.Flow
 
 private const val TAG = "BirthdayListScreen"
 
@@ -61,12 +64,27 @@ private val tomorrow = tomorrow()
 
 @Composable
 fun BirthdayListScreen(
-    viewModel: BirthdaysViewModel,
-    navHostController: NavHostController
+    birthdaysFlow: Flow<BirthdaysState>,
+    onContactsPermissionGranted: () -> Unit
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
-    val birthdaysState = remember(lifecycleOwner.lifecycle) {
-        viewModel.birthdaysFlow.flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+    val context = LocalContext.current
+
+    val requestContactsPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            onContactsPermissionGranted()
+        } else
+            Toast.makeText(
+                context,
+                R.string.allow_access_to_get_birthdays,
+                Toast.LENGTH_LONG
+            ).show()
+    }
+
+    val birthdaysState = remember(lifecycleOwner.lifecycle, birthdaysFlow) {
+        birthdaysFlow.flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
     }.collectAsState(initial = Loading)
 
     when (val state = birthdaysState.value) {
@@ -82,7 +100,12 @@ fun BirthdayListScreen(
             if (state.birthdays.isNotEmpty()) {
                 BirthdayListView(state.birthdays)
             } else {
-                navHostController.toBirthdaysEmptyScreen()
+                BirthdaysEmptyView(
+                    isImportFromContactsVisible = context.isReadContactsNotAllowed(),
+                    onImportFromContactsClick = {
+                        requestContactsPermissionLauncher.launch(android.Manifest.permission.READ_CONTACTS)
+                    }
+                )
             }
         }
     }
@@ -91,7 +114,6 @@ fun BirthdayListScreen(
 @Composable
 private fun BirthdayListView(birthdays: List<Birthday> = emptyList()) {
     val dateFormat = SimpleDateFormat("d MMM", Locale.getDefault())
-    Log.d(TAG, "BirthdayListView: render")
     LazyColumn {
         items(birthdays) { birthday ->
             BirthdayItemView(birthday, dateFormat)
@@ -104,7 +126,6 @@ private fun BirthdayItemView(
     birthday: Birthday,
     dateFormat: SimpleDateFormat
 ) {
-    Log.d(TAG, "BirthdayItemView: $birthday")
     Card(
         modifier = Modifier
             .fillMaxWidth()
