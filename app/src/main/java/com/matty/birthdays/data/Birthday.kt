@@ -4,7 +4,6 @@ import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.matty.birthdays.utils.today
-import java.sql.Timestamp
 import java.util.Calendar
 import java.util.Date
 
@@ -12,7 +11,6 @@ import java.util.Date
 data class Birthday(
     @PrimaryKey
     val contactId: Long,
-    val contactVersion: Int,
 
     val name: String,
     val day: Int,

@@ -8,6 +8,7 @@ import com.matty.birthdays.data.BirthdayRepository
 import com.matty.birthdays.data.ContactsSynchronizer
 import com.matty.birthdays.ui.BirthdaysState.Success
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.Date
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onStart
@@ -18,30 +19,31 @@ private const val TAG = "BirthdaysViewModel"
 
 @HiltViewModel
 class BirthdaysViewModel @Inject constructor(
-    private val birthdayRepository: BirthdayRepository,
-    private val contactsSynchronized: ContactsSynchronizer
+    birthdayRepository: BirthdayRepository,
+    private val contactsSynchronizer: ContactsSynchronizer
 ) : ViewModel() {
 
     val birthdaysFlow: Flow<BirthdaysState> = birthdayRepository.getAll()
         // TODO - do it on application launch once. Mb on splash screen
-        .onStart { contactsSynchronized.synchronize() }
+        .onStart { contactsSynchronizer.synchronize() }
         .transform {
             Log.d(TAG, "birthdaysFlow: birthdays received")
             emit(
                 Success(
-                    birthdays = it.sortedBy(Birthday::nearest)
+                    birthdays = it.groupByTo(sortedMapOf(), Birthday::nearest)
                 )
             )
         }
 
+
     fun syncWithContacts() {
         viewModelScope.launch {
-            contactsSynchronized.synchronize()
+            contactsSynchronizer.synchronize()
         }
     }
 }
 
 sealed class BirthdaysState {
     object Loading : BirthdaysState()
-    data class Success(val birthdays: List<Birthday>) : BirthdaysState()
+    data class Success(val birthdays: Map<Date, List<Birthday>>) : BirthdaysState()
 }

@@ -3,7 +3,7 @@
     <string name="app_name">Birthdays</string>
     <string name="greeting">Welcome</string>
     <string name="allow_access_to_get_birthdays">allow access to get birthdays</string>
-    <string name="contacts_permission_reason">For the application to work correctly grant the application access to the contacts</string>
+    <string name="contacts_permission_rationale">Grant access to contacts to get birthdays</string>
     <string name="importing_from_contacts_label">Importing from contacts</string>
     <string name="privacy_info_label">Birthdays App will never share your information</string>
     <string name="grant_access_to_contacts_btn">Grant access</string>

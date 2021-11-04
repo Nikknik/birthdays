@@ -9,7 +9,7 @@
     <string name="avatar">Фото</string>
     <string name="turns">исполнится %d</string>
     <string name="no_birthdays">Нет дней рождений</string>
-    <string name="contacts_permission_reason">Для полноценной работы приложения необходим доступ к контактам</string>
+    <string name="contacts_permission_rationale">Доступ к контактам необходим для получения дней рождений</string>
     <string name="greeting">Привет</string>
     <string name="grant_access_to_contacts_later">Сделаю потом вручную</string>
     <string name="allow_access_to_get_birthdays">для получения дней рождений</string>

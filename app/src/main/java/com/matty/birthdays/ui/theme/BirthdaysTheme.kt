@@ -4,7 +4,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
-val lightColorPalette = lightColors()
+val lightColorPalette = lightColors(
+
+)
 
 @Composable
 fun BirthdaysTheme(content: @Composable () -> Unit) {

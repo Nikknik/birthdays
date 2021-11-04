@@ -25,8 +25,7 @@ class ContactsDataSource @Inject constructor() {
             ContactsContract.Contacts.DISPLAY_NAME,
             ContactsContract.CommonDataKinds.Event.START_DATE,
             ContactsContract.CommonDataKinds.Event.CONTACT_ID,
-            ContactsContract.Contacts.PHOTO_THUMBNAIL_URI,
-            ContactsContract.RawContacts.VERSION
+            ContactsContract.Contacts.PHOTO_THUMBNAIL_URI
         )
         var where = ContactsContract.CommonDataKinds.Event.TYPE + "=" +
                 ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY
@@ -47,7 +46,6 @@ class ContactsDataSource @Inject constructor() {
                     val contactId = it.getLong(2)
                     Birthday(
                         contactId = contactId,
-                        contactVersion = cursor.getInt(4),
                         name = it.getString(0),
                         day = day,
                         month = month,

@@ -40,7 +40,7 @@ fun WelcomeScreen(
         } else
             Toast.makeText(
                 context,
-                R.string.contacts_permission_reason,
+                R.string.contacts_permission_rationale,
                 Toast.LENGTH_LONG
             ).show()
     }

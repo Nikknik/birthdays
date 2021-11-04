@@ -15,3 +15,8 @@ fun tomorrow(): Date = Calendar.getInstance().apply {
     time = today()
     set(Calendar.DAY_OF_MONTH, get(Calendar.DAY_OF_MONTH) + 1)
 }.time
+
+val Date.dayOfMonth: Int
+    get() = Calendar.getInstance().apply {
+        time = this@dayOfMonth
+    }.get(Calendar.DAY_OF_MONTH)

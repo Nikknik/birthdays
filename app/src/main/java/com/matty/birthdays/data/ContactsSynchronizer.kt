@@ -7,7 +7,7 @@ import android.net.Uri
 import android.provider.ContactsContract.Contacts
 import android.provider.ContactsContract.DeletedContacts
 import android.util.Log
-import com.matty.birthdays.isReadContactsNotAllowed
+import com.matty.birthdays.utils.isReadContactsNotAllowed
 import com.matty.birthdays.utils.toSequence
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
@@ -19,7 +19,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 private const val PREF_LAST_SYNC_TIMESTAMP = "LAST_SYNC_TIMESTAMP"
-private const val TAG = "ContactsBirthdaySync"
+private const val TAG = "ContactsSynchronizer"
 
 @Singleton
 class ContactsSynchronizer @Inject constructor() : ContentObserver(null) {
