@@ -1,4 +1,4 @@
-package com.matty.birthdays
+package com.matty.birthdays.data
 
 import android.app.Activity.MODE_PRIVATE
 import android.content.Context
@@ -7,7 +7,7 @@ import android.net.Uri
 import android.provider.ContactsContract.Contacts
 import android.provider.ContactsContract.DeletedContacts
 import android.util.Log
-import com.matty.birthdays.data.BirthdayRepository
+import com.matty.birthdays.utils.isReadContactsNotAllowed
 import com.matty.birthdays.utils.toSequence
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
@@ -19,7 +19,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 private const val PREF_LAST_SYNC_TIMESTAMP = "LAST_SYNC_TIMESTAMP"
-private const val TAG = "ContactsBirthdaySync"
+private const val TAG = "ContactsSynchronizer"
 
 @Singleton
 class ContactsSynchronizer @Inject constructor() : ContentObserver(null) {
@@ -51,6 +51,11 @@ class ContactsSynchronizer @Inject constructor() : ContentObserver(null) {
 
     suspend fun synchronize() {
         Log.d(TAG, "synchronize: run")
+
+        if (context.isReadContactsNotAllowed()) {
+            Log.w(TAG, "synchronize: insufficient permissions")
+            return
+        }
 
         withContext(coroutineScope.coroutineContext) {
             if (lastSyncTimestamp == 0L) {
