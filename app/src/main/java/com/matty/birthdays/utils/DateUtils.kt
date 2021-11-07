@@ -20,3 +20,9 @@ val Date.dayOfMonth: Int
     get() = Calendar.getInstance().apply {
         time = this@dayOfMonth
     }.get(Calendar.DAY_OF_MONTH)
+
+val Calendar.dayOfMonth: Int
+    get() = this.get(Calendar.DAY_OF_MONTH)
+
+val Calendar.month: Int
+    get() = this.get(Calendar.MONTH)

@@ -12,6 +12,9 @@ interface BirthdayDao {
     @Query("SELECT * FROM birthday")
     fun getBirthdays(): Flow<List<Birthday>>
 
+    @Query("SELECT * FROM birthday WHERE day=(:day) AND month=(:month)")
+    fun getBirthdays(day: Int, month: Int): List<Birthday>
+
     @Insert(onConflict = IGNORE)
     suspend fun addBirthdays(birthday: List<Birthday>)
 
