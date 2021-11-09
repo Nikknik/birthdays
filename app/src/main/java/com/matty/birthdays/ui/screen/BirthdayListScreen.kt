@@ -6,6 +6,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,8 +22,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
@@ -41,27 +48,31 @@ import androidx.lifecycle.flowWithLifecycle
 import coil.compose.rememberImagePainter
 import com.matty.birthdays.R
 import com.matty.birthdays.data.Birthday
-import com.matty.birthdays.ui.BirthdaysState
-import com.matty.birthdays.ui.BirthdaysState.Loading
-import com.matty.birthdays.ui.BirthdaysState.Success
+import com.matty.birthdays.data.DateOfBirth
+import com.matty.birthdays.ui.vm.BirthdaysState
+import com.matty.birthdays.ui.vm.BirthdaysState.Loading
+import com.matty.birthdays.ui.vm.BirthdaysState.Ready
+import com.matty.birthdays.ui.component.BirthdaysEmptyView
 import com.matty.birthdays.ui.theme.BirthdaysTheme
-import com.matty.birthdays.ui.view.BirthdaysEmptyView
-import com.matty.birthdays.utils.dayOfMonth
 import com.matty.birthdays.utils.isReadContactsNotAllowed
 import com.matty.birthdays.utils.today
 import com.matty.birthdays.utils.tomorrow
+import kotlinx.coroutines.flow.Flow
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlinx.coroutines.flow.Flow
 
 private val today = today()
 private val tomorrow = tomorrow()
 
+private const val TAG = "BirthdayListScreen"
+
 @Composable
 fun BirthdayListScreen(
     birthdaysFlow: Flow<BirthdaysState>,
-    onContactsPermissionGranted: () -> Unit
+    onContactsPermissionGranted: () -> Unit,
+    onAddClicked: () -> Unit = {},
+    onRowClicked: (Birthday) -> Unit = {}
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -83,25 +94,37 @@ fun BirthdayListScreen(
         birthdaysFlow.flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
     }.collectAsState(initial = Loading)
 
-    when (val state = birthdaysState.value) {
-        is Loading -> {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                CircularProgressIndicator(progress = 0.5f)
+    Scaffold(
+        floatingActionButton = {
+            if (birthdaysState.value is Ready) {
+                FloatingActionButton(onClick = onAddClicked) {
+                    Icon(imageVector = Icons.Filled.Add, contentDescription = "")
+                }
             }
         }
-        is Success -> {
-            if (state.birthdays.isNotEmpty()) {
-                BirthdaysView(state.birthdays)
-            } else {
-                BirthdaysEmptyView(
-                    isImportFromContactsVisible = context.isReadContactsNotAllowed(),
-                    onImportFromContactsClick = {
-                        requestContactsPermissionLauncher.launch(android.Manifest.permission.READ_CONTACTS)
+    ) { innerPadding ->
+        Surface(modifier = Modifier.padding(innerPadding)) {
+            when (val state = birthdaysState.value) {
+                is Loading -> {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        CircularProgressIndicator(progress = 0.5f)
                     }
-                )
+                }
+                is Ready -> {
+                    if (state.birthdays.isNotEmpty()) {
+                        BirthdayList(state.birthdays, onRowClicked)
+                    } else {
+                        BirthdaysEmptyView(
+                            isImportFromContactsVisible = context.isReadContactsNotAllowed(),
+                            onImportFromContactsClick = {
+                                requestContactsPermissionLauncher.launch(android.Manifest.permission.READ_CONTACTS)
+                            }
+                        )
+                    }
+                }
             }
         }
     }
@@ -109,7 +132,10 @@ fun BirthdayListScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun BirthdaysView(birthdaysMap: Map<Date, List<Birthday>> = emptyMap()) {
+private fun BirthdayList(
+    birthdaysMap: Map<Date, List<Birthday>> = emptyMap(),
+    onRowClicked: (Birthday) -> Unit
+) {
     val dateFormat = remember {
         SimpleDateFormat("d MMM", Locale.getDefault())
     }
@@ -125,7 +151,7 @@ private fun BirthdaysView(birthdaysMap: Map<Date, List<Birthday>> = emptyMap()) 
                 DateHeader(date = date, dateFormat = dateFormat)
             }
             items(birthdays) { birthday ->
-                BirthdayRow(birthday = birthday)
+                BirthdayRow(birthday = birthday, onRowClicked)
             }
         }
     }
@@ -160,7 +186,7 @@ private fun DateHeader(date: Date, dateFormat: SimpleDateFormat) {
 }
 
 @Composable
-private fun BirthdayRow(birthday: Birthday) {
+private fun BirthdayRow(birthday: Birthday, onClick: (Birthday) -> Unit) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -170,6 +196,9 @@ private fun BirthdayRow(birthday: Birthday) {
             .background(Color.White)
             .padding(8.dp)
             .clip(RoundedCornerShape(4.dp))
+            .clickable(onClick = {
+                onClick.invoke(birthday)
+            })
     ) {
         Box(
             modifier = Modifier
@@ -208,32 +237,36 @@ private fun BirthdayRow(birthday: Birthday) {
 
 @Preview(showBackground = true)
 @Composable
-fun BirthdaysView() {
+fun BirthdayList() {
+    val now = DateOfBirth.now()
     BirthdaysTheme {
-        BirthdaysView(
+        BirthdayList(
             mapOf(
                 tomorrow to listOf(
                     Birthday(
                         contactId = 1L,
                         name = "Nikita",
-                        month = tomorrow.month,
-                        day = tomorrow.dayOfMonth,
-                        year = 1997
+                        day = now.day,
+                        month = now.month,
+                        year = now.year
                     ),
                     Birthday(
                         contactId = 1L,
                         name = "Alexander Petrov Alexander Petrov Alexander Petrov Alexander Petrov",
-                        month = tomorrow.month,
-                        day = tomorrow.dayOfMonth
+                        day = now.day,
+                        month = now.month,
+                        year = now.year
                     ),
                     Birthday(
                         contactId = 1L,
                         name = "Ivan Ivanov",
-                        month = tomorrow.month,
-                        day = tomorrow.dayOfMonth
+                        day = now.day,
+                        month = now.month,
+                        year = now.year
                     )
                 )
-            )
+            ),
+            onRowClicked = {}
         )
     }
 }

@@ -14,6 +14,8 @@
     <string name="grant_access_to_contacts_later">Сделаю потом вручную</string>
     <string name="allow_access_to_get_birthdays">для получения дней рождений</string>
     <string name="import_from_contacts_btn">Импортировать из контактов</string>
+    <string name="form_name_required">Enter name</string>
+    <string name="form_date_required">Enter date</string>
     <string name="notification_channel_name">Birthdays Notifier</string>
     <string name="notification_title">Дни рождения сегодня:</string>
     <string name="birthday_cake">Торт на день рождения</string>

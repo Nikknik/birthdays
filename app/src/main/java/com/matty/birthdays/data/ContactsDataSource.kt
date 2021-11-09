@@ -10,9 +10,6 @@ import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
-private const val TAG = "ContactsDataSource"
-
 @Singleton
 class ContactsDataSource @Inject constructor() {
 
@@ -41,15 +38,14 @@ class ContactsDataSource @Inject constructor() {
                 if (c.moveToNext()) c else null
             }.mapNotNull {
                 val dateString = it.getString(1)
-                parseBirthdayDate(dateString)?.let { birthdayDate ->
-                    val (day, month, year) = birthdayDate
+                parseDateOfBirthFrom(dateString)?.let { date ->
                     val contactId = it.getLong(2)
                     Birthday(
                         contactId = contactId,
                         name = it.getString(0),
-                        day = day,
-                        month = month,
-                        year = year,
+                        day = date.day,
+                        month = date.month,
+                        year = date.year,
                         photoUri = cursor.getStringOrNull(3)?.toUri()
                     )
                 }
@@ -58,20 +54,17 @@ class ContactsDataSource @Inject constructor() {
     }
 }
 
-//first - day of month, second - month, third - year (can be null)
-private typealias BirthdayDate = Triple<Int, Int, Int?>
-
-private fun parseBirthdayDate(value: String): BirthdayDate? {
+private fun parseDateOfBirthFrom(value: String): DateOfBirth? {
     BIRTHDAY_FORMATS.value.forEach {
         try {
             val (format, hasYear) = it
             format.parse(value)?.let { date ->
                 val calendar = Calendar.getInstance()
                 calendar.time = date
-                return BirthdayDate(
-                    first = calendar.get(Calendar.DAY_OF_MONTH),
-                    second = calendar.get(Calendar.MONTH),
-                    third = if (hasYear) {
+                return DateOfBirth(
+                    day = calendar.get(Calendar.DAY_OF_MONTH),
+                    month = calendar.get(Calendar.MONTH),
+                    year = if (hasYear) {
                         calendar.get(Calendar.YEAR)
                     } else {
                         null
