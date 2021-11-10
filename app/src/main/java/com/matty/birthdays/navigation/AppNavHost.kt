@@ -9,6 +9,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.matty.birthdays.receiver.NotificationReceiver
 import com.matty.birthdays.ui.BirthdaysViewModel
 import com.matty.birthdays.ui.checkFirstLaunch
 import com.matty.birthdays.ui.screen.BirthdayListScreen
@@ -36,6 +37,7 @@ fun AppNavHost(
         composable(Screen.WELCOME) {
             WelcomeScreen(onFinish = {
                 isFirstLaunch.value = false
+                NotificationReceiver.schedule(context)
             })
         }
         composable(Screen.BIRTHDAY_LIST) {

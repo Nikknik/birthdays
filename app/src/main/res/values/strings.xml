@@ -15,4 +15,6 @@
     <string name="turns">turns %d</string>
     <string name="party_emoji" translatable="false">&#127881;</string>
     <string name="no_birthdays">No birthdays</string>
+    <string name="notification_channel_name">Birthdays Notifier</string>
+    <string name="notification_title">Birthdays today:</string>
 </resources>
