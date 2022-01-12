@@ -1,9 +1,12 @@
 package com.matty.birthdays.data
 
-import android.content.ContentResolver
+import android.content.Context
+import android.net.Uri
 import android.provider.ContactsContract
 import androidx.core.database.getStringOrNull
 import androidx.core.net.toUri
+import com.matty.birthdays.utils.compressPhoto
+import com.matty.birthdays.utils.createInternalPhotoUri
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -14,7 +17,7 @@ import javax.inject.Singleton
 class ContactsDataSource @Inject constructor() {
 
     @Inject
-    lateinit var contentResolver: ContentResolver
+    lateinit var context: Context
 
     fun fetchContacts(id: Collection<Long>): List<Birthday> {
         val uri = ContactsContract.Data.CONTENT_URI
@@ -22,7 +25,7 @@ class ContactsDataSource @Inject constructor() {
             ContactsContract.Contacts.DISPLAY_NAME,
             ContactsContract.CommonDataKinds.Event.START_DATE,
             ContactsContract.CommonDataKinds.Event.CONTACT_ID,
-            ContactsContract.Contacts.PHOTO_THUMBNAIL_URI
+            ContactsContract.Contacts.PHOTO_URI
         )
         var where = ContactsContract.CommonDataKinds.Event.TYPE + "=" +
                 ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY
@@ -32,21 +35,24 @@ class ContactsDataSource @Inject constructor() {
                     " in (${id.joinToString(",")})"
         }
 
-        val cursor = contentResolver.query(uri, queryFields, where, null, null)
+        val cursor = context.contentResolver.query(uri, queryFields, where, null, null)
         return cursor?.use { c ->
             generateSequence {
                 if (c.moveToNext()) c else null
             }.mapNotNull {
                 val dateString = it.getString(1)
+                val contactId = it.getLong(2)
                 parseDateOfBirthFrom(dateString)?.let { date ->
-                    val contactId = it.getLong(2)
                     Birthday(
                         contactId = contactId,
                         name = it.getString(0),
                         day = date.day,
                         month = date.month,
                         year = date.year,
-                        photoUri = cursor.getStringOrNull(3)?.toUri()
+                        photoUri = copyPhotoFromContact(
+                            context,
+                            cursor.getStringOrNull(3)?.toUri()
+                        )
                     )
                 }
             }.toList()
@@ -75,6 +81,18 @@ private fun parseDateOfBirthFrom(value: String): DateOfBirth? {
         }
     }
     return null
+}
+
+private fun copyPhotoFromContact(context: Context, uri: Uri?): Uri? {
+    if (uri == null) return null
+
+    val internalUri = createInternalPhotoUri(context)
+    compressPhoto(
+        context = context,
+        uri = uri,
+        newUri = internalUri
+    )
+    return internalUri
 }
 
 private val BIRTHDAY_FORMATS = lazy {

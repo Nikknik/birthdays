@@ -20,4 +20,17 @@
     <string name="notification_channel_name">Birthdays Notifier</string>
     <string name="notification_title">Birthdays today:</string>
     <string name="birthday_cake">Birthday cake</string>
+    <string name="change_photo">Change photo</string>
+    <string name="remove_photo_btn">Remove photo</string>
+    <string name="take_photo_btn">Take photo</string>
+    <string name="select_photo_btn">Select photo</string>
+    <string name="add_birthday">Add birthday</string>
+    <string name="cancel_btn">Cancel</string>
+    <string name="add_photo">Add photo</string>
+    <string name="name">Name</string>
+    <string name="birthday_date_placeholder">Birthday</string>
+    <string name="include_year">Include year</string>
+    <string name="set_btn">Set</string>
+    <string name="clear">Clear</string>
+    <string name="done">Done</string>
 </resources>

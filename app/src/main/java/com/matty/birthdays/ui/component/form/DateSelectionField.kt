@@ -31,8 +31,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.matty.birthdays.R
 import com.matty.birthdays.data.DateOfBirth
 import com.matty.birthdays.utils.format
 import java.text.DateFormatSymbols
@@ -79,7 +81,7 @@ fun DateSelectionField(
             Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = "")
         },
         placeholder = {
-            Text(text = "Birthday")
+            Text(text = stringResource(R.string.birthday_date_placeholder))
         },
         isError = isError
     )
@@ -153,7 +155,7 @@ fun DateSelectionDialog(
                             onCheckedChange = { includeYears = !includeYears },
                             interactionSource = checkboxInteractionSource
                         )
-                        Text("Include year")
+                        Text(text = stringResource(R.string.include_year))
                     }
                     Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                         AndroidView(factory = { context ->
@@ -208,7 +210,7 @@ fun DateSelectionDialog(
                 TextButton(onClick = {
                     onDismissRequest()
                 }) {
-                    Text(text = "CANCEL")
+                    Text(text = stringResource(R.string.cancel_btn).uppercase())
                 }
                 TextButton(onClick = {
                     onDateSelected(
@@ -219,7 +221,7 @@ fun DateSelectionDialog(
                         )
                     )
                 }) {
-                    Text(text = "SET")
+                    Text(text = stringResource(R.string.set_btn).uppercase())
                 }
             }
         },

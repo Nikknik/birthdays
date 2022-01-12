@@ -11,12 +11,12 @@ import com.matty.birthdays.data.BirthdayRepository
 import com.matty.birthdays.data.DateOfBirth
 import com.matty.birthdays.data.getDate
 import com.matty.birthdays.navigation.Navigator
-import com.matty.birthdays.ui.vm.FormStatus.ERROR
-import com.matty.birthdays.ui.vm.FormStatus.READY
-import com.matty.birthdays.ui.vm.FormStatus.SUBMITTING
 import com.matty.birthdays.ui.component.form.InputField
 import com.matty.birthdays.ui.component.form.InputField.Companion.notEmpty
 import com.matty.birthdays.ui.component.form.InputField.Companion.notNull
+import com.matty.birthdays.ui.vm.FormStatus.ERROR
+import com.matty.birthdays.ui.vm.FormStatus.READY
+import com.matty.birthdays.ui.vm.FormStatus.SUBMITTING
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
@@ -62,7 +62,8 @@ class BirthdayFormViewModel @Inject constructor(
                 name = nameField.value,
                 day = dateField.value!!.day,
                 month = dateField.value!!.month,
-                year = dateField.value!!.year
+                year = dateField.value!!.year,
+                photoUri = photoUri
             )
         }
         viewModelScope.launch {
@@ -88,7 +89,7 @@ class BirthdayForm(
         InputField(of?.name ?: "", notEmpty(R.string.form_name_required))
     val dateField: InputField<DateOfBirth?> =
         InputField(of?.getDate(), notNull(R.string.form_date_required))
-
+    var photoUri = of?.photoUri
     val isValid: Boolean
         get() = nameField.validate() and dateField.validate()
 }

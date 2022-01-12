@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
@@ -49,11 +50,11 @@ import coil.compose.rememberImagePainter
 import com.matty.birthdays.R
 import com.matty.birthdays.data.Birthday
 import com.matty.birthdays.data.DateOfBirth
+import com.matty.birthdays.ui.component.BirthdaysEmptyView
+import com.matty.birthdays.ui.theme.BirthdaysTheme
 import com.matty.birthdays.ui.vm.BirthdaysState
 import com.matty.birthdays.ui.vm.BirthdaysState.Loading
 import com.matty.birthdays.ui.vm.BirthdaysState.Ready
-import com.matty.birthdays.ui.component.BirthdaysEmptyView
-import com.matty.birthdays.ui.theme.BirthdaysTheme
 import com.matty.birthdays.utils.isReadContactsNotAllowed
 import com.matty.birthdays.utils.today
 import com.matty.birthdays.utils.tomorrow
@@ -210,6 +211,7 @@ private fun BirthdayRow(birthday: Birthday, onClick: (Birthday) -> Unit) {
                 Image(
                     painter = rememberImagePainter(uri),
                     contentDescription = "Avatar",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
             }

@@ -18,9 +18,9 @@ class Navigator @Inject constructor() {
     )
     val navigationFlow = _mutableNavigationFlow.asSharedFlow()
 
-    fun goToBirthdayFormScreen(birthdayId: Int = -1) {
+    fun goToBirthdayFormScreen(birthdayId: Int? = null) {
         val event = GoToDestination(
-            destination = "$BIRTHDAY_FORM/$birthdayId"
+            destination = "$BIRTHDAY_FORM?$ARG_ID=${birthdayId ?: ""}"
         )
         _mutableNavigationFlow.tryEmit(event)
     }

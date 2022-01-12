@@ -20,8 +20,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.matty.birthdays.R
 import com.matty.birthdays.ui.vm.BirthdayForm
 import com.matty.birthdays.ui.vm.FormStatus
 import com.matty.birthdays.ui.vm.FormStatus.INIT
@@ -52,8 +54,7 @@ fun BirthdayFormScreen(
         }
         if (status != INIT) {
             BirthdayForm(
-                nameField = form.nameField,
-                dateField = form.dateField,
+                form,
                 enabled = status != SUBMITTING
             )
         }
@@ -78,21 +79,21 @@ private fun TopBar(
         ) {
             Icon(
                 imageVector = Icons.Outlined.Clear,
-                contentDescription = "Clear",
+                contentDescription = stringResource(R.string.clear),
                 modifier = Modifier.clickable {
                     onCancelClicked()
                 }
             )
             Spacer(modifier = Modifier.width(32.dp))
             Text(
-                text = "Add Birthday",
+                text = stringResource(R.string.add_birthday),
                 modifier = Modifier
                     .weight(1f),
                 style = MaterialTheme.typography.h6
             )
             Icon(
                 imageVector = Icons.Default.Done,
-                contentDescription = "Done",
+                contentDescription = stringResource(R.string.done),
                 tint = MaterialTheme.colors.primary,
                 modifier = Modifier.clickable(onClick = onDoneClicked)
             )
