@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">Birthdays</string>
-    <string name="importing_from_contacts_label">Загрузка дней рождений из контактов...</string>
+    <string name="app_name">Дни рождения</string>
+    <string name="importing_from_contacts_label">Загрузка дней рождений из контактов…</string>
     <string name="privacy_info_label">Мы не передаем информацию третьим лицам</string>
     <string name="grant_access_to_contacts_btn">Предоставить доступ</string>
     <string name="grant_access_to_contacts_header">Доступ к контактам</string>
@@ -16,4 +16,5 @@
     <string name="import_from_contacts_btn">Импортировать из контактов</string>
     <string name="notification_channel_name">Birthdays Notifier</string>
     <string name="notification_title">Дни рождения сегодня:</string>
+    <string name="birthday_cake">Торт на день рождения</string>
 </resources>
