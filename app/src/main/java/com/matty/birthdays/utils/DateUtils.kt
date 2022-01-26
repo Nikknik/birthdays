@@ -1,7 +1,13 @@
 package com.matty.birthdays.utils
 
+import android.util.Log
+import com.matty.birthdays.data.DateOfBirth
+import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
+import java.util.Locale
+
+private const val TAG = "DateUtils"
 
 fun today(): Date = Calendar.getInstance().apply {
     time = Date()
@@ -26,3 +32,17 @@ val Calendar.dayOfMonth: Int
 
 val Calendar.month: Int
     get() = this.get(Calendar.MONTH)
+
+fun DateOfBirth.format(): String {
+    val format = if (year == null) "dd MMMM" else "dd MMMM yyyy"
+    val dateFormat = SimpleDateFormat(format, Locale.getDefault())
+    val date = Calendar.getInstance().apply {
+        set(Calendar.DAY_OF_MONTH, day)
+        set(Calendar.MONTH, month)
+        year?.let {
+            set(Calendar.YEAR, year)
+        }
+    }.time
+    Log.d(TAG, "format")
+    return dateFormat.format(date)
+}

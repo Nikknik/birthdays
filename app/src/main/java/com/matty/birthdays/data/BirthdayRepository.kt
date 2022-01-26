@@ -18,8 +18,10 @@ class BirthdayRepository @Inject constructor() {
     @Inject
     lateinit var database: BirthdayDatabase
 
+    val dao by lazy { database.birthdayDao() }
+
     fun getAll(): Flow<List<Birthday>> {
-        return database.birthdayDao().getBirthdays()
+        return dao.getAll()
     }
 
     fun getBirthdaysToday(): List<Birthday> {
@@ -29,7 +31,19 @@ class BirthdayRepository @Inject constructor() {
 
     suspend fun addAll(birthdays: List<Birthday>) {
         withContext(Dispatchers.IO) {
-            database.birthdayDao().addBirthdays(birthdays)
+            dao.addAll(birthdays)
+        }
+    }
+
+    suspend fun add(birthday: Birthday) {
+        withContext(Dispatchers.IO) {
+            dao.add(birthday)
+        }
+    }
+
+    suspend fun update(birthday: Birthday) {
+        withContext(Dispatchers.IO) {
+            dao.update(birthday)
         }
     }
 
@@ -37,8 +51,11 @@ class BirthdayRepository @Inject constructor() {
         return contactsDataSource.get().fetchContacts(id)
     }
 
+    fun getById(id: Int): Flow<Birthday?> {
+        return dao.getById(id)
+    }
 
     suspend fun deleteById(id: List<Long>) {
-        database.birthdayDao().deleteBirthdays(id)
+        database.birthdayDao().deleteById(id)
     }
 }

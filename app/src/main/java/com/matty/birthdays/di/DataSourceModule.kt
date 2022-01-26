@@ -30,4 +30,9 @@ class DataSourceModule {
     fun provideContentResolver(@ApplicationContext appContext: Context): ContentResolver {
         return appContext.contentResolver
     }
+
+    @Provides
+    fun provideContext(@ApplicationContext appContext: Context): Context {
+        return appContext
+    }
 }

@@ -14,7 +14,22 @@
     <string name="grant_access_to_contacts_later">Сделаю потом вручную</string>
     <string name="allow_access_to_get_birthdays">для получения дней рождений</string>
     <string name="import_from_contacts_btn">Импортировать из контактов</string>
+    <string name="form_name_required">Введите имя</string>
+    <string name="form_date_required">Ввведите дату</string>
     <string name="notification_channel_name">Birthdays Notifier</string>
     <string name="notification_title">Дни рождения сегодня:</string>
     <string name="birthday_cake">Торт на день рождения</string>
+    <string name="change_photo">Изменить фото</string>
+    <string name="remove_photo_btn">Удалить фото</string>
+    <string name="take_photo_btn">Сделать фото</string>
+    <string name="select_photo_btn">Выбрать из Галереи</string>
+    <string name="add_birthday">Добавить день рождения</string>
+    <string name="cancel_btn">Отменить</string>
+    <string name="add_photo">Добавить фото</string>
+    <string name="name">Имя</string>
+    <string name="birthday_date_placeholder">Дата</string>
+    <string name="include_year">Включить год</string>
+    <string name="set_btn">Установить</string>
+    <string name="clear">Очистить</string>
+    <string name="done">Выполнено</string>
 </resources>

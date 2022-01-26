@@ -9,15 +9,15 @@ import java.util.Date
 
 @Entity
 data class Birthday(
-    @PrimaryKey
-    val contactId: Long,
-
     val name: String,
     val day: Int,
     val month: Int,
-    val year: Int? = null,
-    val photoUri: Uri? = null
-) : Comparable<Birthday> {
+    val year: Int?,
+    val photoUri: Uri? = null,
+    val contactId: Long? = null,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int? = null
+) {
     @Transient
     val nearest: Date = run {
         val calendar = Calendar.getInstance().apply {
@@ -47,6 +47,4 @@ data class Birthday(
             }.get(Calendar.YEAR) - it
         }
     }
-
-    override fun compareTo(other: Birthday) = nearest.compareTo(nearest)
 }
