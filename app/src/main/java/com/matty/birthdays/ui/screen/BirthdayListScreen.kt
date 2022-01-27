@@ -225,12 +225,30 @@ private fun BirthdayRow(birthday: Birthday, onClick: (Birthday) -> Unit) {
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            birthday.turns?.takeIf { it > 0 }?.let { years ->
-                Text(
-                    stringResource(R.string.turns, years),
-                    style = MaterialTheme.typography.caption,
-                    color = Color.Gray
-                )
+            Row {
+                Column(
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    birthday.turns?.takeIf { it > 0 }?.let { years ->
+                        Text(
+                            stringResource(R.string.turns, years),
+                            style = MaterialTheme.typography.caption,
+                            color = Color.Gray
+                        )
+                    }
+                }
+                if (birthday.contactId != null) {
+                    Column(
+                        horizontalAlignment = Alignment.End,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = stringResource(R.string.from_contacts_label),
+                            style = MaterialTheme.typography.caption,
+                            color = Color.Gray
+                        )
+                    }
+                }
             }
         }
     }
@@ -250,10 +268,9 @@ fun BirthdayList() {
                         name = "Nikita",
                         day = now.day,
                         month = now.month,
-                        year = now.year
+                        year = now.year?.minus(2)
                     ),
                     Birthday(
-                        contactId = 1L,
                         name = "Alexander Petrov Alexander Petrov Alexander Petrov Alexander Petrov",
                         day = now.day,
                         month = now.month,

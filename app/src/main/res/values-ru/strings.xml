@@ -32,4 +32,6 @@
     <string name="set_btn">Установить</string>
     <string name="clear">Очистить</string>
     <string name="done">Выполнено</string>
+    <string name="from_contacts_label">из контактов</string>
+    <string name="imported_warning">Вы не можете редактировать импортированные данные</string>
 </resources>
