@@ -1,6 +1,7 @@
 package com.matty.birthdays.navigation
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -11,11 +12,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.matty.birthdays.receiver.NotificationReceiver
 import androidx.navigation.navArgument
+import com.matty.birthdays.R
 import com.matty.birthdays.navigation.NavigationEvent.GoBack
 import com.matty.birthdays.navigation.NavigationEvent.GoToDestination
 import com.matty.birthdays.navigation.Screen.BIRTHDAY_FORM
+import com.matty.birthdays.receiver.NotificationReceiver
 import com.matty.birthdays.ui.checkFirstLaunch
 import com.matty.birthdays.ui.screen.BirthdayFormScreen
 import com.matty.birthdays.ui.screen.BirthdayListScreen
@@ -59,7 +61,7 @@ fun AppNavHost(
                 if (isFirstLaunch.value) {
                     navController.navigate(Screen.WELCOME)
                 } else {
-                  navController.goToMainScreen()
+                    navController.goToMainScreen()
                 }
             })
         }
@@ -79,7 +81,15 @@ fun AppNavHost(
                     navigator.goToBirthdayFormScreen()
                 },
                 onRowClicked = { birthday ->
-                    navigator.goToBirthdayFormScreen(birthday.id)
+                    if (birthday.contactId == null) {
+                        navigator.goToBirthdayFormScreen(birthday.id)
+                    } else {
+                        Toast.makeText(
+                            context,
+                            R.string.imported_warning,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
             )
         }
@@ -115,7 +125,6 @@ object Screen {
     const val BIRTHDAY_LIST = "BIRTHDAY_LIST"
     const val WELCOME = "CONTACTS_PERMISSION"
     const val BIRTHDAY_FORM = "BIRTHDAY_FORM"
-    const val BIRTHDAY_DETAILS = "BIRTHDAY_DETAILS"
 }
 
 private fun NavHostController.goToMainScreen() {

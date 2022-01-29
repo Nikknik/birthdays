@@ -33,4 +33,6 @@
     <string name="set_btn">Set</string>
     <string name="clear">Clear</string>
     <string name="done">Done</string>
+    <string name="from_contacts_label">from contacts</string>
+    <string name="imported_warning">You cannot edit imported data</string>
 </resources>
