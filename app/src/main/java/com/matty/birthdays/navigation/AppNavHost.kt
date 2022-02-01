@@ -17,14 +17,15 @@ import com.matty.birthdays.R
 import com.matty.birthdays.navigation.NavigationEvent.GoBack
 import com.matty.birthdays.navigation.NavigationEvent.GoToDestination
 import com.matty.birthdays.navigation.Screen.BIRTHDAY_FORM
-import com.matty.birthdays.receiver.NotificationReceiver
 import com.matty.birthdays.ui.checkFirstLaunch
 import com.matty.birthdays.ui.screen.BirthdayFormScreen
 import com.matty.birthdays.ui.screen.BirthdayListScreen
 import com.matty.birthdays.ui.screen.LaunchScreen
 import com.matty.birthdays.ui.screen.WelcomeScreen
+import com.matty.birthdays.ui.settings.SettingsRouter
 import com.matty.birthdays.ui.vm.BirthdayFormViewModel
 import com.matty.birthdays.ui.vm.BirthdaysViewModel
+import com.matty.birthdays.ui.vm.FirstLaunchViewModel
 import kotlinx.coroutines.flow.collect
 
 private const val TAG = "AppNavHost"
@@ -66,9 +67,11 @@ fun AppNavHost(
             })
         }
         composable(Screen.WELCOME) {
+            val firstLaunchViewModel = hiltViewModel<FirstLaunchViewModel>()
+
             WelcomeScreen(onFinish = {
                 isFirstLaunch.value = false
-                NotificationReceiver.schedule(context)
+                firstLaunchViewModel.scheduleNotifications()
                 navController.goToMainScreen()
             })
         }
@@ -90,6 +93,9 @@ fun AppNavHost(
                             Toast.LENGTH_LONG
                         ).show()
                     }
+                },
+                onSettingsClicked = {
+                    navigator.goToSettingsScreen()
                 }
             )
         }
@@ -117,6 +123,9 @@ fun AppNavHost(
                 }
             )
         }
+        composable(Screen.SETTINGS) {
+            SettingsRouter(navigator = navigator)
+        }
     }
 }
 
@@ -125,6 +134,7 @@ object Screen {
     const val BIRTHDAY_LIST = "BIRTHDAY_LIST"
     const val WELCOME = "CONTACTS_PERMISSION"
     const val BIRTHDAY_FORM = "BIRTHDAY_FORM"
+    const val SETTINGS = "SETTINGS"
 }
 
 private fun NavHostController.goToMainScreen() {

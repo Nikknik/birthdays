@@ -1,6 +1,5 @@
 package com.matty.birthdays.receiver
 
-import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -18,19 +17,15 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.util.Calendar
 import kotlin.random.Random
 
-//24days*60minutes*60seconds*1000milliseconds
-private const val NOTIFICATION_INTERVAL = 24*60*60*1000L
-//11 a.m.
-private const val NOTIFICATION_TIME = 11
 private const val TAG = "NotificationReceiver"
 
-class NotificationReceiver: BroadcastReceiver() {
+class NotificationReceiver : BroadcastReceiver() {
 
     @InstallIn(SingletonComponent::class)
     @EntryPoint
@@ -39,18 +34,18 @@ class NotificationReceiver: BroadcastReceiver() {
         fun contactsSynchronizer(): ContactsSynchronizer
     }
 
+    @DelicateCoroutinesApi
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.d(TAG, "onReceive: started")
 
         GlobalScope.launch(Dispatchers.IO) {
-            val requireContext = context!!
-            val synchronizer = getContactsSynchronizer(requireContext)
+            val synchronizer = getContactsSynchronizer(context!!)
             synchronizer.synchronize()
 
-            val birthdays = getRepository(requireContext).getBirthdaysToday()
+            val birthdays = getRepository(context).getBirthdaysToday()
             Log.d(TAG, "birthdays today: ${birthdays.joinToString { it.name }}")
-            if(birthdays.isNotEmpty()) {
-                notify(requireContext, birthdays)
+            if (birthdays.isNotEmpty()) {
+                notify(context, birthdays)
             }
         }
     }
@@ -87,31 +82,5 @@ class NotificationReceiver: BroadcastReceiver() {
             NotificationReceiverEntryPoint::class.java
         )
         return entryPoint.contactsSynchronizer()
-    }
-
-    companion object {
-        fun schedule(context: Context) {
-            val intent = Intent(context, NotificationReceiver::class.java)
-            val pendingIntent = PendingIntent.getBroadcast(
-                context,
-                0,
-                intent,
-                PendingIntent.FLAG_CANCEL_CURRENT
-            )
-            val firstRunTime = Calendar.getInstance().apply {
-                set(Calendar.HOUR_OF_DAY, NOTIFICATION_TIME)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-            }
-
-            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            alarmManager.setRepeating(
-                AlarmManager.RTC_WAKEUP,
-                firstRunTime.timeInMillis,
-                NOTIFICATION_INTERVAL,
-                pendingIntent
-            )
-        }
     }
 }
