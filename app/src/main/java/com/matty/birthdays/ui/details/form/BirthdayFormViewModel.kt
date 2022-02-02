@@ -11,7 +11,7 @@ import com.matty.birthdays.data.Birthday
 import com.matty.birthdays.data.BirthdayRepository
 import com.matty.birthdays.data.DateOfBirth
 import com.matty.birthdays.data.getDate
-import com.matty.birthdays.navigation.Navigator
+import com.matty.birthdays.navigation.NavAdapter
 import com.matty.birthdays.ui.details.form.FormStatus.ERROR
 import com.matty.birthdays.ui.details.form.FormStatus.LOADING
 import com.matty.birthdays.ui.details.form.FormStatus.READY
@@ -28,7 +28,7 @@ private const val TAG = "BirthdayFormViewModel"
 @HiltViewModel
 class BirthdayFormViewModel @Inject constructor(
     private val birthdayRepository: BirthdayRepository,
-    private val navigator: Navigator
+    private val navAdapter: NavAdapter
 ) : ViewModel() {
 
     private var birthdayId: Int? = null
@@ -61,7 +61,7 @@ class BirthdayFormViewModel @Inject constructor(
     }
 
     fun onCancelClicked() {
-        navigator.goBack()
+        navAdapter.goBack()
     }
 
     fun onDoneClicked() {
@@ -86,7 +86,7 @@ class BirthdayFormViewModel @Inject constructor(
                 } else {
                     birthdayRepository.update(birthday)
                 }
-                navigator.goBack()
+                navAdapter.goBack()
             } catch (e: Exception) {
                 _status.value = ERROR
             }

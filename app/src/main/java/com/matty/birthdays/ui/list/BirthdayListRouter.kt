@@ -8,11 +8,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.matty.birthdays.R
-import com.matty.birthdays.navigation.Navigator
+import com.matty.birthdays.navigation.NavAdapter
 
 @Composable
 fun BirthdayListRouter(
-    navigator: Navigator,
+    navAdapter: NavAdapter,
     viewModel: BirthdayListViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -26,11 +26,11 @@ fun BirthdayListRouter(
         state = state,
         onContactsPermissionGranted = viewModel::refreshState,
         onAddClicked = {
-            navigator.goToBirthdayFormScreen()
+            navAdapter.goToBirthdayFormScreen()
         },
         onRowClicked = { birthday ->
             if (birthday.contactId == null) {
-                navigator.goToBirthdayFormScreen(birthday.id)
+                navAdapter.goToBirthdayFormScreen(birthday.id)
             } else {
                 Toast.makeText(
                     context,

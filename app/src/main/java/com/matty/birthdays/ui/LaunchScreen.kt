@@ -1,4 +1,4 @@
-package com.matty.birthdays.ui.screen
+package com.matty.birthdays.ui
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
