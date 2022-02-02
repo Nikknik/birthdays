@@ -1,4 +1,4 @@
-package com.matty.birthdays.ui.component.form
+package com.matty.birthdays.ui.fields
 
 import android.content.Context
 import androidx.annotation.StringRes

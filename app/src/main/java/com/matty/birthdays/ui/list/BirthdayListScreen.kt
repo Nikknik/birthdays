@@ -1,10 +1,10 @@
-package com.matty.birthdays.ui.screen
+package com.matty.birthdays.ui.list
 
+import android.Manifest
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,10 +17,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
@@ -35,34 +33,26 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
-import coil.compose.rememberImagePainter
 import com.matty.birthdays.R
 import com.matty.birthdays.data.Birthday
 import com.matty.birthdays.data.DateOfBirth
-import com.matty.birthdays.ui.component.BirthdaysEmptyView
+import com.matty.birthdays.ui.details.Photo
+import com.matty.birthdays.ui.list.BirthdaysState.Loading
+import com.matty.birthdays.ui.list.BirthdaysState.Ready
 import com.matty.birthdays.ui.theme.BirthdaysTheme
-import com.matty.birthdays.ui.vm.BirthdaysState
-import com.matty.birthdays.ui.vm.BirthdaysState.Loading
-import com.matty.birthdays.ui.vm.BirthdaysState.Ready
 import com.matty.birthdays.utils.isReadContactsNotAllowed
 import com.matty.birthdays.utils.today
 import com.matty.birthdays.utils.tomorrow
-import kotlinx.coroutines.flow.Flow
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -70,17 +60,14 @@ import java.util.Locale
 private val today = today()
 private val tomorrow = tomorrow()
 
-private const val TAG = "BirthdayListScreen"
-
 @Composable
 fun BirthdayListScreen(
-    birthdaysFlow: Flow<BirthdaysState>,
+    state: BirthdaysState,
     onContactsPermissionGranted: () -> Unit,
     onAddClicked: () -> Unit = {},
     onRowClicked: (Birthday) -> Unit = {},
     onSettingsClicked: () -> Unit = {}
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
     val requestContactsPermissionLauncher = rememberLauncherForActivityResult(
@@ -96,13 +83,9 @@ fun BirthdayListScreen(
             ).show()
     }
 
-    val birthdaysState = remember(lifecycleOwner.lifecycle, birthdaysFlow) {
-        birthdaysFlow.flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-    }.collectAsState(initial = Loading)
-
     Scaffold(
         floatingActionButton = {
-            if (birthdaysState.value is Ready) {
+            if (state is Ready) {
                 FloatingActionButton(onClick = onAddClicked) {
                     Icon(imageVector = Icons.Filled.Add, contentDescription = "")
                 }
@@ -113,7 +96,7 @@ fun BirthdayListScreen(
         }
     ) { innerPadding ->
         Surface(modifier = Modifier.padding(innerPadding)) {
-            when (val state = birthdaysState.value) {
+            when (state) {
                 is Loading -> {
                     Box(
                         contentAlignment = Alignment.Center,
@@ -129,7 +112,7 @@ fun BirthdayListScreen(
                         BirthdaysEmptyView(
                             isImportFromContactsVisible = context.isReadContactsNotAllowed(),
                             onImportFromContactsClick = {
-                                requestContactsPermissionLauncher.launch(android.Manifest.permission.READ_CONTACTS)
+                                requestContactsPermissionLauncher.launch(Manifest.permission.READ_CONTACTS)
                             }
                         )
                     }
@@ -201,7 +184,6 @@ private fun DateHeader(date: Date, dateFormat: SimpleDateFormat) {
         today -> stringResource(R.string.today_text)
         else -> dateFormat.format(date)
     }
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -237,21 +219,11 @@ private fun BirthdayRow(birthday: Birthday, onClick: (Birthday) -> Unit) {
                 onClick.invoke(birthday)
             })
     ) {
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(Color.LightGray)
-        ) {
-            birthday.photoUri?.let { uri ->
-                Image(
-                    painter = rememberImagePainter(uri),
-                    contentDescription = "Avatar",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-        }
+        Photo(
+            uri = birthday.photoUri,
+            size = 40.dp,
+            description = R.string.photo
+        )
         Column(
             modifier = Modifier.fillMaxHeight()
         ) {
@@ -288,7 +260,6 @@ private fun BirthdayRow(birthday: Birthday, onClick: (Birthday) -> Unit) {
             }
         }
     }
-
 }
 
 @Preview(showBackground = true)

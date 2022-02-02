@@ -1,4 +1,4 @@
-package com.matty.birthdays.ui.component
+package com.matty.birthdays.ui.list
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

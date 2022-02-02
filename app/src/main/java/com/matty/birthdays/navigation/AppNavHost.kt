@@ -1,31 +1,25 @@
 package com.matty.birthdays.navigation
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.matty.birthdays.R
 import com.matty.birthdays.navigation.NavigationEvent.GoBack
 import com.matty.birthdays.navigation.NavigationEvent.GoToDestination
 import com.matty.birthdays.navigation.Screen.BIRTHDAY_FORM
+import com.matty.birthdays.receiver.NotificationReceiver
+import com.matty.birthdays.ui.details.form.BirthdayFormRouter
+import com.matty.birthdays.ui.list.BirthdayListRouter
 import com.matty.birthdays.ui.checkFirstLaunch
-import com.matty.birthdays.ui.screen.BirthdayFormScreen
-import com.matty.birthdays.ui.screen.BirthdayListScreen
 import com.matty.birthdays.ui.screen.LaunchScreen
 import com.matty.birthdays.ui.screen.WelcomeScreen
-import com.matty.birthdays.ui.settings.SettingsRouter
-import com.matty.birthdays.ui.vm.BirthdayFormViewModel
-import com.matty.birthdays.ui.vm.BirthdaysViewModel
-import com.matty.birthdays.ui.vm.FirstLaunchViewModel
 import kotlinx.coroutines.flow.collect
 
 private const val TAG = "AppNavHost"
@@ -67,37 +61,14 @@ fun AppNavHost(
             })
         }
         composable(Screen.WELCOME) {
-            val firstLaunchViewModel = hiltViewModel<FirstLaunchViewModel>()
-
             WelcomeScreen(onFinish = {
                 isFirstLaunch.value = false
-                firstLaunchViewModel.scheduleNotifications()
+                NotificationReceiver.schedule(context)
                 navController.goToMainScreen()
             })
         }
         composable(Screen.BIRTHDAY_LIST) {
-            val viewModel = hiltViewModel<BirthdaysViewModel>()
-            BirthdayListScreen(
-                birthdaysFlow = viewModel.birthdaysFlow,
-                onContactsPermissionGranted = viewModel::syncWithContacts,
-                onAddClicked = {
-                    navigator.goToBirthdayFormScreen()
-                },
-                onRowClicked = { birthday ->
-                    if (birthday.contactId == null) {
-                        navigator.goToBirthdayFormScreen(birthday.id)
-                    } else {
-                        Toast.makeText(
-                            context,
-                            R.string.imported_warning,
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                },
-                onSettingsClicked = {
-                    navigator.goToSettingsScreen()
-                }
-            )
+            BirthdayListRouter(navigator = navigator)
         }
         composable(
             "$BIRTHDAY_FORM?$ARG_ID={id}",
@@ -107,24 +78,8 @@ fun AppNavHost(
                 defaultValue = null
             })
         ) { backStackEntry ->
-            val formViewModel = hiltViewModel<BirthdayFormViewModel>()
-            val id = backStackEntry.arguments?.getString(ARG_ID)
-            BirthdayFormScreen(
-                onCancelClicked = { navigator.goBack() },
-                onDoneClicked = formViewModel::onDoneClicked,
-                status = formViewModel.status,
-                form = formViewModel.form,
-                initFormState = {
-                    if (id != null) {
-                        formViewModel.initFromBirthday(id.toInt())
-                    } else {
-                        formViewModel.initEmptyForm()
-                    }
-                }
-            )
-        }
-        composable(Screen.SETTINGS) {
-            SettingsRouter(navigator = navigator)
+            val id = backStackEntry.arguments?.getString(ARG_ID)?.toInt()
+            BirthdayFormRouter(id = id)
         }
     }
 }
@@ -134,7 +89,6 @@ object Screen {
     const val BIRTHDAY_LIST = "BIRTHDAY_LIST"
     const val WELCOME = "CONTACTS_PERMISSION"
     const val BIRTHDAY_FORM = "BIRTHDAY_FORM"
-    const val SETTINGS = "SETTINGS"
 }
 
 private fun NavHostController.goToMainScreen() {
