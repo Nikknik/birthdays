@@ -3,6 +3,7 @@ package com.matty.birthdays.ui.screen
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import com.matty.birthdays.ui.LaunchScreen
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test

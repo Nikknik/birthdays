@@ -9,7 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.navigation.compose.rememberNavController
 import com.matty.birthdays.navigation.AppNavHost
-import com.matty.birthdays.navigation.Navigator
+import com.matty.birthdays.navigation.NavAdapter
 import com.matty.birthdays.ui.theme.BirthdaysTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -17,7 +17,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject
-    lateinit var navigator: Navigator
+    lateinit var navAdapter: NavAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             BirthdaysTheme {
-                AppNavHost(navController = navController, navigator = navigator)
+                AppNavHost(navController = navController, navAdapter = navAdapter)
             }
         }
     }

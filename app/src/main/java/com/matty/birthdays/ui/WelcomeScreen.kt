@@ -1,4 +1,4 @@
-package com.matty.birthdays.ui.screen
+package com.matty.birthdays.ui
 
 import android.Manifest
 import android.widget.Toast

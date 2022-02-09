@@ -1,5 +1,6 @@
-package com.matty.birthdays.ui.vm
+package com.matty.birthdays.ui.details.form
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,52 +11,64 @@ import com.matty.birthdays.data.Birthday
 import com.matty.birthdays.data.BirthdayRepository
 import com.matty.birthdays.data.DateOfBirth
 import com.matty.birthdays.data.getDate
-import com.matty.birthdays.navigation.Navigator
-import com.matty.birthdays.ui.component.form.InputField
-import com.matty.birthdays.ui.component.form.InputField.Companion.notEmpty
-import com.matty.birthdays.ui.component.form.InputField.Companion.notNull
-import com.matty.birthdays.ui.vm.FormStatus.ERROR
-import com.matty.birthdays.ui.vm.FormStatus.READY
-import com.matty.birthdays.ui.vm.FormStatus.SUBMITTING
+import com.matty.birthdays.navigation.NavAdapter
+import com.matty.birthdays.ui.details.form.FormStatus.ERROR
+import com.matty.birthdays.ui.details.form.FormStatus.LOADING
+import com.matty.birthdays.ui.details.form.FormStatus.READY
+import com.matty.birthdays.ui.details.form.FormStatus.SUBMITTING
+import com.matty.birthdays.ui.fields.InputField
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+private const val TAG = "BirthdayFormViewModel"
 
 @HiltViewModel
 class BirthdayFormViewModel @Inject constructor(
     private val birthdayRepository: BirthdayRepository,
-    private val navigator: Navigator
+    private val navAdapter: NavAdapter
 ) : ViewModel() {
 
     private var birthdayId: Int? = null
+    private var _status = MutableStateFlow(LOADING)
+    val status = _status.asStateFlow()
 
-    var form: BirthdayForm = BirthdayForm()
+    var form: BirthdayFormState = BirthdayFormState()
         private set
 
-    var status by mutableStateOf(FormStatus.INIT)
-        private set
-
-    fun initFromBirthday(birthdayId: Int) {
-        this.birthdayId = birthdayId
-        viewModelScope.launch {
-            birthdayRepository.getById(birthdayId).collect { birthday ->
-                form = BirthdayForm(of = birthday)
-                status = READY
-            }
+    fun initFormState(birthdayId: Int?) {
+        Log.d(TAG, "initFormState:")
+        if (birthdayId == null) {
+            initEmptyForm()
+        } else {
+            initFromBirthday(birthdayId)
         }
     }
 
-    fun initEmptyForm() {
-        status = READY
+    private fun initFromBirthday(birthdayId: Int) {
+        this.birthdayId = birthdayId
+        viewModelScope.launch {
+            val birthday = birthdayRepository.getById(birthdayId)
+            form = BirthdayFormState(birthday)
+            _status.value = READY
+        }
+    }
+
+    private fun initEmptyForm() {
+        _status.value = READY
+    }
+
+    fun onCancelClicked() {
+        navAdapter.goBack()
     }
 
     fun onDoneClicked() {
         if (!form.isValid) {
             return
         }
-        status = SUBMITTING
+        _status.value = SUBMITTING
         val birthday = with(form) {
             Birthday(
                 id = birthdayId,
@@ -67,35 +80,32 @@ class BirthdayFormViewModel @Inject constructor(
             )
         }
         viewModelScope.launch {
-            delay(2000)
             try {
                 if (birthdayId == null) {
                     birthdayRepository.add(birthday)
                 } else {
                     birthdayRepository.update(birthday)
                 }
-                navigator.goBack()
+                navAdapter.goBack()
             } catch (e: Exception) {
-                status = ERROR
+                _status.value = ERROR
             }
         }
     }
 }
 
-class BirthdayForm(
-    of: Birthday? = null
-) {
+class BirthdayFormState(birthday: Birthday? = null) {
     val nameField: InputField<String> =
-        InputField(of?.name ?: "", notEmpty(R.string.form_name_required))
+        InputField(birthday?.name ?: "", InputField.notEmpty(R.string.form_name_required))
     val dateField: InputField<DateOfBirth?> =
-        InputField(of?.getDate(), notNull(R.string.form_date_required))
-    var photoUri = of?.photoUri
+        InputField(birthday?.getDate(), InputField.notNull(R.string.form_date_required))
+    var photoUri by mutableStateOf(birthday?.photoUri)
     val isValid: Boolean
         get() = nameField.validate() and dateField.validate()
 }
 
 enum class FormStatus {
-    INIT,
+    LOADING,
     READY,
     SUBMITTING,
     ERROR

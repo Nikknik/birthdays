@@ -1,11 +1,11 @@
-package com.matty.birthdays.ui.component.form
+package com.matty.birthdays.ui.fields
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusState
-import com.matty.birthdays.ui.component.form.FieldError.Empty
-import com.matty.birthdays.ui.component.form.FieldError.StringResource
+import com.matty.birthdays.ui.fields.FieldError.Empty
+import com.matty.birthdays.ui.fields.FieldError.StringResource
 
 typealias FieldValidator<T> = (T) -> FieldError
 

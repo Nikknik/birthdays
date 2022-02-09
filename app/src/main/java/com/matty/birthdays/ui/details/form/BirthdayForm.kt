@@ -1,18 +1,11 @@
-package com.matty.birthdays.ui.component.form
+package com.matty.birthdays.ui.details.form
 
-import android.net.Uri
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -23,26 +16,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
 import com.matty.birthdays.R
 import com.matty.birthdays.data.DateOfBirth
-import com.matty.birthdays.ui.component.PhotoDialog
-import com.matty.birthdays.ui.vm.BirthdayForm
-
-private val PHOTO_SIZE = 120.dp
+import com.matty.birthdays.ui.details.Photo
+import com.matty.birthdays.ui.fields.DateSelectionField
+import com.matty.birthdays.ui.fields.FieldError
+import com.matty.birthdays.ui.fields.InputField
 
 @Composable
 fun BirthdayForm(
-    form: BirthdayForm,
+    form: BirthdayFormState,
     enabled: Boolean = true
 ) {
+    val (isPhotoDialogOpen, setPhotoDialogOpen) = remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,6 +41,15 @@ fun BirthdayForm(
     ) {
         Spacer(modifier = Modifier.height(24.dp))
         Photo(
+            uri = form.photoUri,
+            size = 120.dp,
+            description = if (form.photoUri == null) R.string.add_photo else R.string.photo,
+            default = R.drawable.add_photo,
+            onClick = { setPhotoDialogOpen(true) }
+        )
+        PhotoChangeDialog(
+            isOpen = isPhotoDialogOpen,
+            setDialogOpen = setPhotoDialogOpen,
             uri = form.photoUri,
             onPhotoChanged = { newUri ->
                 form.photoUri = newUri
@@ -104,42 +103,4 @@ private fun DateField(field: InputField<DateOfBirth?>, enabled: Boolean = true) 
         enabled = enabled
     )
     FieldError(field = field)
-}
-
-@Composable
-private fun Photo(uri: Uri?, onPhotoChanged: (Uri?) -> Unit) {
-    val photoUri = remember { mutableStateOf(uri) }
-    val (isPhotoDialogOpen, setPhotoDialogOpen) = remember { mutableStateOf(false) }
-
-    Box(
-        modifier = Modifier
-            .size(PHOTO_SIZE)
-            .clip(CircleShape)
-            .background(Color.LightGray)
-            .clickable {
-                setPhotoDialogOpen(true)
-            },
-        contentAlignment = Alignment.Center
-    ) {
-        val painter =
-            if (photoUri.value == null) painterResource(id = R.drawable.add_photo)
-            else rememberImagePainter(photoUri.value)
-
-        Image(
-            painter = painter,
-            contentDescription = stringResource(R.string.add_photo),
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-
-        PhotoDialog(
-            isOpen = isPhotoDialogOpen,
-            setDialogOpen = setPhotoDialogOpen,
-            uri = uri,
-            onPhotoChanged = { newUri ->
-                onPhotoChanged(newUri)
-                photoUri.value = newUri
-            }
-        )
-    }
 }

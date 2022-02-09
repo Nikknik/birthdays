@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.Flow
 interface BirthdayDao {
 
     @Query("SELECT * FROM birthday")
-    fun getAll(): Flow<List<Birthday>>
+    suspend fun getAll(): List<Birthday>
 
     @Query("SELECT * FROM birthday WHERE day=(:day) AND month=(:month)")
-    fun getBirthdays(day: Int, month: Int): List<Birthday>
+    suspend fun getBirthdays(day: Int, month: Int): List<Birthday>
 
     @Insert(onConflict = IGNORE)
     suspend fun addAll(birthday: List<Birthday>)
@@ -29,5 +29,5 @@ interface BirthdayDao {
     suspend fun deleteById(id: List<Long>)
 
     @Query("SELECT * FROM birthday where id = :id LIMIT 1")
-    fun getById(id: Int): Flow<Birthday?>
+    suspend fun getById(id: Int): Birthday?
 }

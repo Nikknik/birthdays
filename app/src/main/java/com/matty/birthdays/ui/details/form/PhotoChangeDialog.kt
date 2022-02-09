@@ -1,4 +1,4 @@
-package com.matty.birthdays.ui.component
+package com.matty.birthdays.ui.details.form
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -28,7 +28,7 @@ import com.matty.birthdays.utils.deletePhoto
 
 
 @Composable
-fun PhotoDialog(
+fun PhotoChangeDialog(
     isOpen: Boolean,
     setDialogOpen: (Boolean) -> Unit,
     uri: Uri?,
