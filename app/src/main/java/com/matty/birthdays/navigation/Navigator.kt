@@ -4,6 +4,7 @@ import com.matty.birthdays.navigation.NavigationEvent.GoBack
 import com.matty.birthdays.navigation.NavigationEvent.GoToDestination
 import com.matty.birthdays.navigation.Screen.BIRTHDAY_FORM
 import com.matty.birthdays.navigation.Screen.BIRTHDAY_LIST
+import com.matty.birthdays.navigation.Screen.SETTINGS
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -19,17 +20,18 @@ class Navigator @Inject constructor() {
     val navigationFlow = _mutableNavigationFlow.asSharedFlow()
 
     fun goToBirthdayFormScreen(birthdayId: Int? = null) {
-        val event = GoToDestination(
-            destination = "$BIRTHDAY_FORM?$ARG_ID=${birthdayId ?: ""}"
-        )
-        _mutableNavigationFlow.tryEmit(event)
+        navigateTo("$BIRTHDAY_FORM?$ARG_ID=${birthdayId ?: ""}")
     }
 
     fun goToBirthdayListScreen() {
-        _mutableNavigationFlow.tryEmit(GoToDestination(BIRTHDAY_LIST))
+        navigateTo(BIRTHDAY_LIST)
     }
 
-    fun navigateTo(destination: String) {
+    fun goToSettingsScreen() {
+        navigateTo(SETTINGS)
+    }
+
+    private fun navigateTo(destination: String) {
         val event = GoToDestination(destination)
         _mutableNavigationFlow.tryEmit(event)
     }

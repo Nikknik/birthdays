@@ -3,6 +3,7 @@ package com.matty.birthdays.ui
 import android.app.Activity.MODE_PRIVATE
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -37,7 +38,7 @@ class MainActivity : ComponentActivity() {
 private const val PREF_FIRST_LAUNCH = "FIRST_LAUNCH"
 
 fun Context.checkFirstLaunch(): Boolean {
-    val sharedPrefs = getSharedPreferences(applicationInfo.packageName, MODE_PRIVATE)
+    val sharedPrefs = getSharedPreferences()
     val isFirstLaunch = sharedPrefs.getBoolean(PREF_FIRST_LAUNCH, true)
     if (isFirstLaunch) {
         sharedPrefs.edit()
@@ -46,3 +47,8 @@ fun Context.checkFirstLaunch(): Boolean {
     }
     return isFirstLaunch
 }
+
+fun Context.getSharedPreferences(): SharedPreferences = getSharedPreferences(
+    applicationInfo.packageName,
+    MODE_PRIVATE
+)

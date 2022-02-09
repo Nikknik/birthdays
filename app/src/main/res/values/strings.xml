@@ -17,7 +17,7 @@
     <string name="no_birthdays">No birthdays</string>
     <string name="form_name_required">Enter name</string>
     <string name="form_date_required">Enter date</string>
-    <string name="notification_channel_name">Birthdays Notifier</string>
+    <string name="notification_channel_name" translatable="false">Birthdays Notifier</string>
     <string name="notification_title">Birthdays today:</string>
     <string name="birthday_cake">Birthday cake</string>
     <string name="change_photo">Change photo</string>
@@ -35,4 +35,10 @@
     <string name="done">Done</string>
     <string name="from_contacts_label">from contacts</string>
     <string name="imported_warning">You cannot edit imported data</string>
+    <string name="settings">Settings</string>
+    <string name="notifications">Notifications</string>
+    <string name="notifications_on">On</string>
+    <string name="notifications_off">Off</string>
+    <string name="time">Time</string>
+    <string name="back">Back</string>
 </resources>

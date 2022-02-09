@@ -10,10 +10,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,8 +30,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
@@ -73,7 +77,8 @@ fun BirthdayListScreen(
     birthdaysFlow: Flow<BirthdaysState>,
     onContactsPermissionGranted: () -> Unit,
     onAddClicked: () -> Unit = {},
-    onRowClicked: (Birthday) -> Unit = {}
+    onRowClicked: (Birthday) -> Unit = {},
+    onSettingsClicked: () -> Unit = {}
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -102,6 +107,9 @@ fun BirthdayListScreen(
                     Icon(imageVector = Icons.Filled.Add, contentDescription = "")
                 }
             }
+        },
+        topBar = {
+            TopBar(onSettingsClicked)
         }
     ) { innerPadding ->
         Surface(modifier = Modifier.padding(innerPadding)) {
@@ -127,6 +135,34 @@ fun BirthdayListScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun TopBar(
+    onSettingsClicked: () -> Unit
+) {
+    TopAppBar(
+        contentPadding = PaddingValues(
+            start = 8.dp,
+            end = 8.dp
+        ),
+        backgroundColor = MaterialTheme.colors.surface,
+        modifier = Modifier.height(32.dp)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.End,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Icon(
+                imageVector = Icons.Default.Settings,
+                contentDescription = stringResource(R.string.settings),
+                tint = MaterialTheme.colors.primary,
+                modifier = Modifier.clickable {
+                    onSettingsClicked()
+                }
+            )
         }
     }
 }
